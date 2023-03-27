@@ -1,4 +1,5 @@
 import { EventAttributes } from "ics";
+import dayjs from "dayjs";
 import { StreetSchedule } from "./types";
 
 const splitDates = (dates: string) => {
@@ -16,9 +17,12 @@ const generateEvent = (
     street: string,
     houseNumber: string
 ): EventAttributes => {
+    const targetDate = dayjs(`${year}-${month}-${day}`);
+    const nextDate = targetDate.add(1, "day");
+
     return {
-        start: [year, month, day, 5, 0],
-        duration: { hours: 6, minutes: 0 },
+        start: [year, month, day],
+        end: [nextDate.year(), nextDate.month() + 1, nextDate.date()],
         title: `Odbior odpadów - ${wasteType}`,
         description: wasteType,
         location: `${street} ${houseNumber}`,

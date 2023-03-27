@@ -7,7 +7,24 @@ export const generateCalendarFile = async (events: EventAttributes[]) => {
                 reject(error);
             }
 
-            resolve(new Blob(["\ufeff", value], { type: "text/plain;charset=utf-8" }));
+            const str = value as string;
+
+            // https://stackoverflow.com/questions/32937088/javascript-create-utf-16-text-file
+            let charCode,
+                byteArray = [];
+
+            // BE BOM
+            byteArray.push(254, 255);
+
+            for (let i = 0; i < str.length; ++i) {
+                charCode = str.charCodeAt(i);
+
+                // BE Bytes
+                byteArray.push((charCode & 0xff00) >>> 8);
+                byteArray.push(charCode & 0xff);
+            }
+
+            resolve(new Blob([new Uint8Array(byteArray)], { type: "text/plain;charset=UTF-16BE;" }));
         });
     });
 
