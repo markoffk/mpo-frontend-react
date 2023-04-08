@@ -111,7 +111,6 @@ export const generateCalendarEventsForOneWasteType = (schedule: StreetSchedule, 
     const dates = splitDates(schedule.waste[wasteType]);
 
     if (dates.every((date: string) => new RegExp("^[0-9]{2}.[0-9]{2}$").test(date))) {
-        console.log("aaa");
         for (const date of dates) {
             const [day, month] = date.split(".");
 
