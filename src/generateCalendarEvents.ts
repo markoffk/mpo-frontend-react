@@ -5,6 +5,21 @@ import { StreetSchedule } from "./types";
 
 type WasteType = keyof StreetSchedule["waste"];
 
+const monthMap = {
+    stycznia: 1,
+    lutego: 2,
+    marca: 3,
+    kwietnia: 4,
+    maja: 5,
+    czerwca: 6,
+    lipca: 7,
+    sierpnia: 8,
+    września: 9,
+    października: 10,
+    listopada: 11,
+    grudnia: 12,
+};
+
 const polishDayToRRuleDayMap: { [key: string]: ByWeekday } = {
     poniedziałek: RRule.MO,
     wtorek: RRule.TU,
@@ -68,14 +83,14 @@ const generateEvent = (
 
 const generateEventByRRule = (
     rrule: string,
-    year: number,
+    start: [number, number, number],
     wasteType: WasteType,
     street: string,
     houseNumber: string
 ): EventAttributes => {
     return {
         recurrenceRule: rrule.slice(6),
-        start: [year, 1, 1],
+        start: start,
         duration: { days: 1 },
         title: `Odbior odpadów - ${wasteTypeMap[wasteType]}`,
         description: wasteTypeMap[wasteType],
@@ -121,8 +136,52 @@ export const generateCalendarEventsForOneWasteType = (schedule: StreetSchedule, 
         });
 
         events.push(
-            generateEventByRRule(rrule.toString(), schedule.year, wasteType, schedule.street, schedule.houseNumber)
+            generateEventByRRule(
+                rrule.toString(),
+                [schedule.year, 1, 1],
+                wasteType,
+                schedule.street,
+                schedule.houseNumber
+            )
         );
+    } else {
+        const dtStart = dayjs(`${schedule.year}-01-01`);
+
+        const scheduleStr = schedule.waste[wasteType];
+
+        const res1 = scheduleStr.match(/(.*)co ([0-9]+) tygodnie/);
+        const res2 = scheduleStr.match(/od dnia ([0-9]+)(.+)/);
+
+        if (res1 || res2) {
+            const weekday = res1[1]
+                .trim()
+                .split(",")
+                .map((v: string) => polishDayToRRuleDayMap[v.trim()]);
+
+            const weekInterval = Number(res1[2]);
+
+            const day = Number(res2[1]);
+            const monthNumber = monthMap[res2[2].trim() as keyof typeof monthMap];
+
+            const rrule = new RRule({
+                until: dtStart.endOf("year").toDate(),
+                freq: RRule.WEEKLY,
+                interval: weekInterval,
+                byweekday: weekday,
+            });
+
+            if (day && monthNumber) {
+                events.push(
+                    generateEventByRRule(
+                        rrule.toString(),
+                        [schedule.year, monthNumber, day],
+                        wasteType,
+                        schedule.street,
+                        schedule.houseNumber
+                    )
+                );
+            }
+        }
     }
 
     return events;
