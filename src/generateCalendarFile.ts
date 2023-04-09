@@ -7,7 +7,7 @@ export const generateCalendarFile = async (events: EventAttributes[]) => {
                 reject(error);
             }
 
-            const str = value as string;
+            const str = (value as string).replaceAll('RRULE:RDATE:', 'RDATE:');
 
             // https://stackoverflow.com/questions/32937088/javascript-create-utf-16-text-file
             let charCode,

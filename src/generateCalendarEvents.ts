@@ -60,13 +60,13 @@ const defaultEventAttributes: Pick<
     EventAttributes,
     "url" | "categories" | "status" | "busyStatus" | "classification" | "calName" | "organizer" | "alarms"
 > = {
-    url: "http://odbior.zayats.pl",
+    url: "http://mpo.zayats.pl",
     categories: ["Odbior odpadów"],
     status: "CONFIRMED",
     busyStatus: "FREE",
     classification: "PUBLIC",
     calName: "Odbior odpadów",
-    organizer: { name: "Władysław Zayats", email: "easypaste.org@gmail.com" },
+    organizer: { name: "mpo.zayats.pl", email: "mpo.zayats.pl@gmail.com" },
     alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
 };
 
