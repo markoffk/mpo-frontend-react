@@ -22,8 +22,8 @@ type StreetRow = {
 
 const year = 2023;
 
-const downloadCalendar = async (schedule: StreetSchedule) => {
-    const url = await generateCalendarFile(generateCalendarEvents(schedule));
+const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) => {
+    const url = await generateCalendarFile(generateCalendarEvents(streetIndex, schedule));
 
     // trying to assign the file URL to a window could cause cross-site
     // issues so this is a workaround using HTML5
@@ -123,7 +123,7 @@ function App() {
                 renderInput={(params) => <TextField {...params} label="Numer" />}
             />
 
-            {selectedStreetSchedule && (
+            {selectedStreet && selectedStreetSchedule && (
                 <TableContainer component={Paper} sx={{ width: "100%", maxWidth: 500 }}>
                     <Table aria-label="simple table">
                         <TableBody>
@@ -186,7 +186,13 @@ function App() {
                                     Kalendarz
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Button onClick={() => downloadCalendar(selectedStreetSchedule)}>Pobierz</Button>
+                                    <Button
+                                        onClick={() =>
+                                            downloadCalendar(selectedStreet.fileIndex, selectedStreetSchedule)
+                                        }
+                                    >
+                                        Pobierz
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         </TableBody>

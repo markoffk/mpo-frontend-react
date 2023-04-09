@@ -61,8 +61,10 @@ const generateEvent = (
     month: number,
     day: number,
     wasteType: WasteType,
+    streetIndex: number,
     street: string,
-    houseNumber: string
+    houseNumber: string,
+    scheduleId: string
 ): EventAttributes => {
     return {
         start: [year, month, day],
@@ -70,12 +72,12 @@ const generateEvent = (
         title: `Odbior odpadów - ${wasteTypeMap[wasteType]}`,
         description: wasteTypeMap[wasteType],
         location: `${street} ${houseNumber}`,
-        url: "http://zayats.pl",
+        url: "http://odbior.zayats.pl",
         categories: ["Odbior odpadów"],
         status: "CONFIRMED",
         busyStatus: "FREE",
-        calName: "vlad test",
-        uid: btoa(`mpo.zayats.pl-${year}-${month}`),
+        calName: "Odbior odpadów",
+        // uid: btoa(`mpo-${year}-${wasteType}-${streetIndex}-${scheduleId}`),
         organizer: { name: "Władysław Zayats", email: "easypaste.org@gmail.com" },
         alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
     };
@@ -105,7 +107,11 @@ const generateEventByRRule = (
     };
 };
 
-export const generateCalendarEventsForOneWasteType = (schedule: StreetSchedule, wasteType: WasteType) => {
+export const generateCalendarEventsForOneWasteType = (
+    streetIndex: number,
+    schedule: StreetSchedule,
+    wasteType: WasteType
+) => {
     const events = [];
 
     const dates = splitDates(schedule.waste[wasteType]);
@@ -120,8 +126,10 @@ export const generateCalendarEventsForOneWasteType = (schedule: StreetSchedule, 
                     Number(month),
                     Number(day),
                     wasteType,
+                    streetIndex,
                     schedule.street,
-                    schedule.houseNumber
+                    schedule.houseNumber,
+                    schedule.id
                 )
             );
         }
@@ -185,17 +193,17 @@ export const generateCalendarEventsForOneWasteType = (schedule: StreetSchedule, 
 
     return events;
 };
-export const generateCalendarEvents = (schedule: StreetSchedule): EventAttributes[] => {
+export const generateCalendarEvents = (streetIndex: number, schedule: StreetSchedule): EventAttributes[] => {
     // return [
     //     generateEvent(2023, 4, 3, "mixed", "Widłakowa", "56c"),
     //     generateEvent(2023, 4, 4, "mixed", "Widłakowa", "56c"),
     // ];
     return [
-        ...generateCalendarEventsForOneWasteType(schedule, "mixed"),
-        ...generateCalendarEventsForOneWasteType(schedule, "paper"),
-        ...generateCalendarEventsForOneWasteType(schedule, "plastic"),
-        ...generateCalendarEventsForOneWasteType(schedule, "glass"),
-        ...generateCalendarEventsForOneWasteType(schedule, "bio"),
-        ...generateCalendarEventsForOneWasteType(schedule, "barrel"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "plastic"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel"),
     ];
 };
