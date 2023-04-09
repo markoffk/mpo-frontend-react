@@ -1,4 +1,4 @@
-import { datetime, RRule, RRuleSet, rrulestr, ByWeekday } from "rrule";
+import { datetime, RRule, RRuleSet, ByWeekday } from "rrule";
 import { EventAttributes } from "ics";
 import dayjs from "dayjs";
 import { StreetSchedule } from "./types";
@@ -61,11 +61,11 @@ const defaultEventAttributes: Pick<
     "url" | "categories" | "status" | "busyStatus" | "classification" | "calName" | "organizer" | "alarms"
 > = {
     url: "http://mpo.zayats.pl",
-    categories: ["Odbior odpadów"],
+    categories: ["Odbiór odpadów"],
     status: "CONFIRMED",
     busyStatus: "FREE",
     classification: "PUBLIC",
-    calName: "Odbior odpadów",
+    calName: "Odbiór odpadów",
     organizer: { name: "mpo.zayats.pl", email: "mpo.zayats.pl@gmail.com" },
     alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
 };
@@ -84,10 +84,9 @@ const generateEvent = (
         ...defaultEventAttributes,
         start: [year, month, day],
         duration: { days: 1 },
-        title: `Odbior odpadów - ${wasteTypeMap[wasteType]}`,
+        title: `Odbiór odpadów - ${wasteTypeMap[wasteType]}`,
         description: wasteTypeMap[wasteType],
         location: `${street} ${houseNumber}`,
-        // uid: btoa(`mpo-${year}-${wasteType}-${streetIndex}-${scheduleId}`),
     };
 };
 
@@ -103,7 +102,7 @@ const generateEventByRRule = (
         recurrenceRule: rrule.slice(6),
         start: start,
         duration: { days: 1 },
-        title: `Odbior odpadów - ${wasteTypeMap[wasteType]}`,
+        title: `Odbiór odpadów - ${wasteTypeMap[wasteType]}`,
         description: wasteTypeMap[wasteType],
         location: `${street} ${houseNumber}`,
     };
@@ -119,12 +118,11 @@ export const generateCalendarEventsForOneWasteType = (
     const dates = splitDates(schedule.waste[wasteType]);
 
     if (dates.every((date: string) => new RegExp("^[0-9]{2}.[0-9]{2}$").test(date))) {
-
         const rruleSet = new RRuleSet();
 
         for (const date of dates) {
             const [day, month] = date.split(".");
-            rruleSet.rdate(datetime(schedule.year, Number(month), Number(day)))
+            rruleSet.rdate(datetime(schedule.year, Number(month), Number(day)));
 
             // events.push(
             //     generateEvent(
