@@ -56,6 +56,20 @@ const splitDates = (dates: string) => {
         .filter((val: string) => !!val);
 };
 
+const defaultEventAttributes: Pick<
+    EventAttributes,
+    "url" | "categories" | "status" | "busyStatus" | "classification" | "calName" | "organizer" | "alarms"
+> = {
+    url: "http://odbior.zayats.pl",
+    categories: ["Odbior odpadów"],
+    status: "CONFIRMED",
+    busyStatus: "FREE",
+    classification: "PUBLIC",
+    calName: "Odbior odpadów",
+    organizer: { name: "Władysław Zayats", email: "easypaste.org@gmail.com" },
+    alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
+};
+
 const generateEvent = (
     year: number,
     month: number,
@@ -67,19 +81,13 @@ const generateEvent = (
     scheduleId: string
 ): EventAttributes => {
     return {
+        ...defaultEventAttributes,
         start: [year, month, day],
         duration: { days: 1 },
         title: `Odbior odpadów - ${wasteTypeMap[wasteType]}`,
         description: wasteTypeMap[wasteType],
         location: `${street} ${houseNumber}`,
-        url: "http://odbior.zayats.pl",
-        categories: ["Odbior odpadów"],
-        status: "CONFIRMED",
-        busyStatus: "FREE",
-        calName: "Odbior odpadów",
         // uid: btoa(`mpo-${year}-${wasteType}-${streetIndex}-${scheduleId}`),
-        organizer: { name: "Władysław Zayats", email: "easypaste.org@gmail.com" },
-        alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
     };
 };
 
@@ -91,19 +99,13 @@ const generateEventByRRule = (
     houseNumber: string
 ): EventAttributes => {
     return {
+        ...defaultEventAttributes,
         recurrenceRule: rrule.slice(6),
         start: start,
         duration: { days: 1 },
         title: `Odbior odpadów - ${wasteTypeMap[wasteType]}`,
         description: wasteTypeMap[wasteType],
         location: `${street} ${houseNumber}`,
-        url: "http://zayats.pl",
-        categories: ["Odbior odpadów"],
-        status: "CONFIRMED",
-        busyStatus: "FREE",
-        calName: "vlad test",
-        organizer: { name: "Władysław Zayats", email: "easypaste.org@gmail.com" },
-        alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
     };
 };
 
