@@ -119,22 +119,36 @@ export const generateCalendarEventsForOneWasteType = (
     const dates = splitDates(schedule.waste[wasteType]);
 
     if (dates.every((date: string) => new RegExp("^[0-9]{2}.[0-9]{2}$").test(date))) {
+
+        const rruleSet = new RRuleSet();
+
         for (const date of dates) {
             const [day, month] = date.split(".");
+            rruleSet.rdate(datetime(schedule.year, Number(month), Number(day)))
 
-            events.push(
-                generateEvent(
-                    schedule.year,
-                    Number(month),
-                    Number(day),
-                    wasteType,
-                    streetIndex,
-                    schedule.street,
-                    schedule.houseNumber,
-                    schedule.id
-                )
-            );
+            // events.push(
+            //     generateEvent(
+            //         schedule.year,
+            //         Number(month),
+            //         Number(day),
+            //         wasteType,
+            //         streetIndex,
+            //         schedule.street,
+            //         schedule.houseNumber,
+            //         schedule.id
+            //     )
+            // );
         }
+
+        events.push(
+            generateEventByRRule(
+                `RRULE:${rruleSet.toString()}`,
+                [schedule.year, 1, 1],
+                wasteType,
+                schedule.street,
+                schedule.houseNumber
+            )
+        );
     } else if (dates.every((date: string) => polishDays.includes(date.toLocaleLowerCase("pl")))) {
         const dtStart = dayjs(`${schedule.year}-01-01`);
 
@@ -196,10 +210,6 @@ export const generateCalendarEventsForOneWasteType = (
     return events;
 };
 export const generateCalendarEvents = (streetIndex: number, schedule: StreetSchedule): EventAttributes[] => {
-    // return [
-    //     generateEvent(2023, 4, 3, "mixed", "Widłakowa", "56c"),
-    //     generateEvent(2023, 4, 4, "mixed", "Widłakowa", "56c"),
-    // ];
     return [
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed"),
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper"),
