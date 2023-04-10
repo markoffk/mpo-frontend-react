@@ -4,6 +4,7 @@ import {
     Container,
     FormControl,
     InputLabel,
+    Link,
     MenuItem,
     Paper,
     Select,
@@ -20,6 +21,8 @@ import { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
 import { generateCalendarFile } from "../generateCalendarFile";
 import { generateCalendarEvents } from "../generateCalendarEvents";
+import { Link as RouterLink } from "react-router-dom";
+import RecyclingIcon from "@mui/icons-material/Recycling";
 
 type StreetRow = {
     label: string;
@@ -71,7 +74,7 @@ export const RootView = () => {
                 .then((data) =>
                     setStreetSchedules(
                         data.map((value: string[], index: number) => ({
-                            id: `schedule-${index}`,
+                            id: index,
                             houseType: value[0],
                             street: value[1],
                             houseNumber: value[2],
@@ -206,6 +209,16 @@ export const RootView = () => {
                                             Kalendarz
                                         </TableCell>
                                         <TableCell align="right">
+                                            <Link color="inherit" component={RouterLink} to={`/schedule/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`} title="Strona główna">
+                                                Pokaż
+                                            </Link>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell component="th" scope="row">
+                                            Kalendarz w pliku .ics
+                                        </TableCell>
+                                        <TableCell align="right">
                                             <Button
                                                 onClick={() =>
                                                     downloadCalendar(selectedStreet.fileIndex, selectedStreetSchedule)
@@ -213,6 +226,7 @@ export const RootView = () => {
                                             >
                                                 Pobierz
                                             </Button>
+
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
