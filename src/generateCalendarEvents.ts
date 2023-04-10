@@ -70,6 +70,15 @@ const defaultEventAttributes: Pick<
     alarms: [{ action: "display", description: "Reminder", trigger: { minutes: 10, before: true } }],
 };
 
+const wasteTypeToIconMap: { [key in WasteType]: string } = {
+    mixed: "♻",
+    paper: "♻",
+    plastic: "♻",
+    glass: "♻",
+    bio: "♻",
+    barrel: "♻",
+}
+
 const generateEvent = (
     year: number,
     month: number,
@@ -102,8 +111,8 @@ const generateEventByRRule = (
         recurrenceRule: rrule.slice(6),
         start: start,
         duration: { days: 1 },
-        title: `Odbiór odpadów - ${wasteTypeMap[wasteType]}`,
-        description: wasteTypeMap[wasteType],
+        title: `${wasteTypeToIconMap[wasteType]} ${wasteTypeMap[wasteType]}`,
+        description: `Odbiór odpadów - ${wasteTypeMap[wasteType]}`,
         location: `${street} ${houseNumber}`,
     };
 };
