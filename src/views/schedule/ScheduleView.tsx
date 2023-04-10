@@ -1,17 +1,57 @@
-import { useParams } from "react-router-dom";
+import {Link as RouterLink, useParams} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
-import { StreetSchedule } from "../../types";
+import {StreetSchedule, WasteType} from "../../types";
 import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
-import { Container, Stack } from "@mui/material";
-import { DateCalendar, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+    Badge, Button,
+    Container,
+    Link,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow
+} from "@mui/material";
+import { DateCalendar, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { RRule } from "rrule";
+import dayjs, { Dayjs } from "dayjs";
+import RecyclingIcon from "@mui/icons-material/Recycling";
+
+const wasteTypeToAbbrMap: { [key in WasteType]: string } = {
+    mixed: "z",
+    paper: "p",
+    plastic: "ts",
+    glass: "s",
+    bio: "b",
+    barrel: "beczka",
+}
+
+function DayWithHighlight(props: PickersDayProps<Dayjs> & { highlightedDays?: { [key: string]: Dayjs[] } }) {
+    const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+
+    // const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) > 0;
+    // console.log('props.day', props.day.date());
+    const calDayYMD = `${props.day.year()}-${props.day.month()}-${props.day.date()}`;
+    console.log("calDayYMD", calDayYMD);
+    const isSelected = Object.values(highlightedDays)
+        .flatMap((v) => v)
+        .some((v) => `${v.year()}-${v.month()}-${v.date()}` === calDayYMD);
+
+    return (
+        <Badge key={props.day.toString()} overlap="circular" badgeContent={isSelected ? <RecyclingIcon /> : undefined}>
+            <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
+        </Badge>
+    );
+}
 
 export const ScheduleView = () => {
     const { year, streetIndex, scheduleId } = useParams();
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
-    const [dates, setDates] = useState<{ [key: string]: Date[] }>({});
+    const [dates, setDates] = useState<{ [key: string]: Dayjs[] }>({});
 
     useEffect(() => {
         if (year !== undefined && streetIndex !== undefined && scheduleId !== undefined) {
@@ -42,21 +82,52 @@ export const ScheduleView = () => {
     useEffect(() => {
         if (selectedStreetSchedule) {
             const events = generateCalendarEventsForPreview(Number(streetIndex), selectedStreetSchedule);
-            const rrule = RRule.fromString(events[0].events[0].recurrenceRule!);
-            setDates({
-                [events[0].type]: rrule.all(),
-            });
+
+            setDates(
+                Object.fromEntries(
+                    events.map((v) => [
+                        v.type,
+                        v.events.flatMap((ve) =>
+                            RRule.fromString(ve.recurrenceRule!)
+                                .all()
+                                .map((v) => dayjs(v))
+                        ),
+                    ])
+                )
+            );
         }
     }, [selectedStreetSchedule]);
-
-    console.log("dates", dates);
 
     return (
         <>
             <Container>
                 <Stack sx={{ width: "100%", padding: "50px" }} gap={2} alignItems="center">
+                    {selectedStreetSchedule && (
+                        <TableContainer component={Paper} sx={{ width: "100%", maxWidth: 500 }}>
+                            <Table aria-label="simple table">
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell component="th" scope="row">
+                                            Adres
+                                        </TableCell>
+                                        <TableCell align="right">{selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateCalendar />
+                        <DateCalendar
+                            showDaysOutsideCurrentMonth
+                            slots={{
+                                day: DayWithHighlight,
+                            }}
+                            slotProps={{
+                                day: {
+                                    highlightedDays: dates,
+                                } as any,
+                            }}
+                        />
                     </LocalizationProvider>
                 </Stack>
             </Container>

@@ -1,9 +1,7 @@
 import { datetime, RRule, RRuleSet, ByWeekday } from "rrule";
 import { EventAttributes } from "ics";
 import dayjs from "dayjs";
-import { StreetSchedule } from "./types";
-
-type WasteType = keyof StreetSchedule["waste"];
+import { StreetSchedule, WasteType } from "./types";
 
 const monthMap = {
     stycznia: 1,

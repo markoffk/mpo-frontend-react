@@ -15,3 +15,5 @@ export type StreetSchedule = {
     };
     year: number;
 };
+
+export type WasteType = keyof StreetSchedule["waste"];
