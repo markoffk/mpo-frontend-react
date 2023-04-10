@@ -208,7 +208,7 @@ export const RootView = () => {
                                             <Link
                                                 color="inherit"
                                                 component={RouterLink}
-                                                to={`/schedule/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`}
+                                                to={`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`}
                                                 title="Strona główna"
                                             >
                                                 Pokaż
