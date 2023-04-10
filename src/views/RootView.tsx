@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
 import { generateCalendarFile } from "../generateCalendarFile";
-import { generateCalendarEvents } from "../generateCalendarEvents";
+import { generateCalendarEventsForICS } from "../generateCalendarEvents";
 import { Link as RouterLink } from "react-router-dom";
 import { api } from "../api";
 
@@ -30,7 +30,7 @@ type StreetRow = {
 };
 
 const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) => {
-    const url = await generateCalendarFile(generateCalendarEvents(streetIndex, schedule));
+    const url = await generateCalendarFile(generateCalendarEventsForICS(streetIndex, schedule));
 
     // trying to assign the file URL to a window could cause cross-site
     // issues so this is a workaround using HTML5

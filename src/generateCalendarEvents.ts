@@ -216,7 +216,7 @@ export const generateCalendarEventsForOneWasteType = (
 
     return events;
 };
-export const generateCalendarEvents = (streetIndex: number, schedule: StreetSchedule): EventAttributes[] => {
+export const generateCalendarEventsForICS = (streetIndex: number, schedule: StreetSchedule): EventAttributes[] => {
     return [
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed"),
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper"),
@@ -224,5 +224,37 @@ export const generateCalendarEvents = (streetIndex: number, schedule: StreetSche
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass"),
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio"),
         ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel"),
+    ];
+};
+
+export const generateCalendarEventsForPreview = (
+    streetIndex: number,
+    schedule: StreetSchedule
+): { type: WasteType; events: EventAttributes[] }[] => {
+    return [
+        {
+            type: "mixed",
+            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed"),
+        },
+        {
+            type: "paper",
+            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper"),
+        },
+        {
+            type: "plastic",
+            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "plastic"),
+        },
+        {
+            type: "glass",
+            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass"),
+        },
+        {
+            type: "bio",
+            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio"),
+        },
+        {
+            type: "barrel",
+            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel"),
+        },
     ];
 };

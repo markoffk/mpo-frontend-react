@@ -2,14 +2,15 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import { StreetSchedule } from "../../types";
+import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
 
 export const ScheduleView = () => {
-    const { year, fileIndex, scheduleId } = useParams();
+    const { year, streetIndex, scheduleId } = useParams();
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
 
     useEffect(() => {
-        if (year !== undefined && fileIndex !== undefined && scheduleId !== undefined) {
-            api.fetchStreet(Number(year), Number(fileIndex)).then((data) =>
+        if (year !== undefined && streetIndex !== undefined && scheduleId !== undefined) {
+            api.fetchStreet(Number(year), Number(streetIndex)).then((data) =>
                 setSelectedStreetSchedule(
                     data.map((value: string[], index: number) => ({
                         id: index,
@@ -31,7 +32,11 @@ export const ScheduleView = () => {
                 )
             );
         }
-    }, [year, fileIndex, scheduleId]);
+    }, [year, streetIndex, scheduleId]);
+
+    if (selectedStreetSchedule) {
+        console.log(generateCalendarEventsForPreview(Number(streetIndex), selectedStreetSchedule));
+    }
 
     return <></>;
 };
