@@ -139,7 +139,7 @@ export const RootView = () => {
                                 </li>
                             );
                         }}
-                        renderInput={(params) => <TextField {...params} label="Numer" />}
+                        renderInput={(params) => <TextField {...params} label="Numer domu" />}
                     />
 
                     {selectedStreet && selectedStreetSchedule && (
