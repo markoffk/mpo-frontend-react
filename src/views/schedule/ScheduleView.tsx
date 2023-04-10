@@ -1,9 +1,7 @@
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export const ScheduleView = () => {
     const params = useParams();
-    console.log('params', params);
-    return (
-        <></>
-    )
-}
+    console.log("params", params);
+    return <></>;
+};

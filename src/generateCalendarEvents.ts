@@ -77,7 +77,7 @@ const wasteTypeToIconMap: { [key in WasteType]: string } = {
     glass: "♻",
     bio: "♻",
     barrel: "♻",
-}
+};
 
 const generateEvent = (
     year: number,
