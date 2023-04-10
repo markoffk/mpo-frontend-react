@@ -22,7 +22,7 @@ import { StreetSchedule } from "../types";
 import { generateCalendarFile } from "../generateCalendarFile";
 import { generateCalendarEvents } from "../generateCalendarEvents";
 import { Link as RouterLink } from "react-router-dom";
-import RecyclingIcon from "@mui/icons-material/Recycling";
+import { api } from "../api";
 
 type StreetRow = {
     label: string;
@@ -62,36 +62,32 @@ export const RootView = () => {
     );
 
     useEffect(() => {
-        fetch(`/api/${year}/street-index.json`)
-            .then((response) => response.json())
-            .then((data) => setStreetMap(data));
+        api.fetchStreetIndex(year).then((data) => setStreetMap(data));
     }, []);
 
     useEffect(() => {
         if (selectedStreet) {
-            fetch(`/api/${year}/street-${selectedStreet?.fileIndex}.json`)
-                .then((response) => response.json())
-                .then((data) =>
-                    setStreetSchedules(
-                        data.map((value: string[], index: number) => ({
-                            id: index,
-                            houseType: value[0],
-                            street: value[1],
-                            houseNumber: value[2],
-                            sector: value[3],
-                            operator: value[4],
-                            waste: {
-                                mixed: value[5],
-                                paper: value[6],
-                                plastic: value[7],
-                                glass: value[8],
-                                bio: value[9],
-                                barrel: value[10],
-                            },
-                            year,
-                        }))
-                    )
-                );
+            api.fetchStreet(year, selectedStreet.fileIndex).then((data) =>
+                setStreetSchedules(
+                    data.map((value: string[], index: number) => ({
+                        id: index,
+                        houseType: value[0],
+                        street: value[1],
+                        houseNumber: value[2],
+                        sector: value[3],
+                        operator: value[4],
+                        waste: {
+                            mixed: value[5],
+                            paper: value[6],
+                            plastic: value[7],
+                            glass: value[8],
+                            bio: value[9],
+                            barrel: value[10],
+                        },
+                        year,
+                    }))
+                )
+            );
         } else {
             setStreetSchedules([]);
         }
@@ -209,7 +205,12 @@ export const RootView = () => {
                                             Kalendarz
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Link color="inherit" component={RouterLink} to={`/schedule/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`} title="Strona główna">
+                                            <Link
+                                                color="inherit"
+                                                component={RouterLink}
+                                                to={`/schedule/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`}
+                                                title="Strona główna"
+                                            >
                                                 Pokaż
                                             </Link>
                                         </TableCell>
@@ -226,7 +227,6 @@ export const RootView = () => {
                                             >
                                                 Pobierz
                                             </Button>
-
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
