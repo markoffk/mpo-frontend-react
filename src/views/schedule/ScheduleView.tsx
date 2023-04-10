@@ -1,10 +1,11 @@
-import {Link as RouterLink, useParams} from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
-import {StreetSchedule, WasteType} from "../../types";
+import { StreetSchedule, WasteType } from "../../types";
 import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
 import {
-    Badge, Button,
+    Badge,
+    Button,
     Container,
     Link,
     Paper,
@@ -13,7 +14,7 @@ import {
     TableBody,
     TableCell,
     TableContainer,
-    TableRow
+    TableRow,
 } from "@mui/material";
 import { DateCalendar, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -28,7 +29,7 @@ const wasteTypeToAbbrMap: { [key in WasteType]: string } = {
     glass: "s",
     bio: "b",
     barrel: "beczka",
-}
+};
 
 function DayWithHighlight(props: PickersDayProps<Dayjs> & { highlightedDays?: { [key: string]: Dayjs[] } }) {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
@@ -84,16 +85,7 @@ export const ScheduleView = () => {
             const events = generateCalendarEventsForPreview(Number(streetIndex), selectedStreetSchedule);
 
             setDates(
-                Object.fromEntries(
-                    events.map((v) => [
-                        v.type,
-                        v.events.flatMap((ve) =>
-                            RRule.fromString(ve.recurrenceRule!)
-                                .all()
-                                .map((v) => dayjs(v))
-                        ),
-                    ])
-                )
+                Object.fromEntries(events.map((v) => [v.type, v.events.flatMap((ve) => ve.dates.map((v) => dayjs(v)))]))
             );
         }
     }, [selectedStreetSchedule]);
@@ -110,7 +102,9 @@ export const ScheduleView = () => {
                                         <TableCell component="th" scope="row">
                                             Adres
                                         </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}</TableCell>
+                                        <TableCell align="right">
+                                            {selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}
+                                        </TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>

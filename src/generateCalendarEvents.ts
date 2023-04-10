@@ -119,7 +119,7 @@ export const generateCalendarEventsForOneWasteType = (
     streetIndex: number,
     schedule: StreetSchedule,
     wasteType: WasteType
-) => {
+): { dates: Date[]; event: EventAttributes }[] => {
     const events = [];
 
     const dates = splitDates(schedule.waste[wasteType]);
@@ -145,15 +145,16 @@ export const generateCalendarEventsForOneWasteType = (
             // );
         }
 
-        events.push(
-            generateEventByRRule(
+        events.push({
+            dates: rruleSet.all(),
+            event: generateEventByRRule(
                 `RRULE:${rruleSet.toString()}`,
                 [schedule.year, 1, 1],
                 wasteType,
                 schedule.street,
                 schedule.houseNumber
-            )
-        );
+            ),
+        });
     } else if (dates.every((date: string) => polishDays.includes(date.toLocaleLowerCase("pl")))) {
         const dtStart = dayjs(`${schedule.year}-01-01`);
 
@@ -163,15 +164,16 @@ export const generateCalendarEventsForOneWasteType = (
             byweekday: dates.map((date) => polishDayToRRuleDayMap[date]),
         });
 
-        events.push(
-            generateEventByRRule(
+        events.push({
+            dates: rrule.all(),
+            event: generateEventByRRule(
                 rrule.toString(),
                 [schedule.year, 1, 1],
                 wasteType,
                 schedule.street,
                 schedule.houseNumber
-            )
-        );
+            ),
+        });
     } else {
         const dtStart = dayjs(`${schedule.year}-01-01`);
 
@@ -199,15 +201,16 @@ export const generateCalendarEventsForOneWasteType = (
             });
 
             if (day && monthNumber) {
-                events.push(
-                    generateEventByRRule(
+                events.push({
+                    dates: rrule.all(),
+                    event: generateEventByRRule(
                         rrule.toString(),
                         [schedule.year, monthNumber, day],
                         wasteType,
                         schedule.street,
                         schedule.houseNumber
-                    )
-                );
+                    ),
+                });
             }
         }
     }
@@ -216,19 +219,19 @@ export const generateCalendarEventsForOneWasteType = (
 };
 export const generateCalendarEventsForICS = (streetIndex: number, schedule: StreetSchedule): EventAttributes[] => {
     return [
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed"),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper"),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "plastic"),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass"),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio"),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel"),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "plastic").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel").map((v) => v.event),
     ];
 };
 
 export const generateCalendarEventsForPreview = (
     streetIndex: number,
     schedule: StreetSchedule
-): { type: WasteType; events: EventAttributes[] }[] => {
+): { type: WasteType; events: { dates: Date[]; event: EventAttributes }[] }[] => {
     return [
         {
             type: "mixed",
