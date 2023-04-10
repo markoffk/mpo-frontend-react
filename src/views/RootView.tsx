@@ -1,9 +1,12 @@
 import {
-    AppBar,
     Autocomplete,
     Button,
     Container,
+    FormControl,
+    InputLabel,
+    MenuItem,
     Paper,
+    Select,
     Stack,
     Table,
     TableBody,
@@ -11,10 +14,8 @@ import {
     TableContainer,
     TableRow,
     TextField,
-    Toolbar,
-    Typography,
 } from "@mui/material";
-import RecyclingIcon from "@mui/icons-material/Recycling";
+import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
 import { generateCalendarFile } from "../generateCalendarFile";
@@ -24,8 +25,6 @@ type StreetRow = {
     label: string;
     fileIndex: number;
 };
-
-const year = 2023;
 
 const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) => {
     const url = await generateCalendarFile(generateCalendarEvents(streetIndex, schedule));
@@ -44,6 +43,7 @@ const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) =
 };
 
 export const RootView = () => {
+    const [year, setYear] = useState(dayjs().year());
     const [streetMap, setStreetMap] = useState<{ [key: string]: number }>({});
     const [streetSchedules, setStreetSchedules] = useState<StreetSchedule[]>([]);
     const [selectedStreet, setSelectedStreet] = useState<StreetRow | null>(null);
@@ -99,6 +99,19 @@ export const RootView = () => {
         <>
             <Container>
                 <Stack sx={{ width: "100%", padding: "50px" }} gap={2} alignItems="center">
+                    <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
+                        <InputLabel id="demo-simple-select-label">Rok</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            value={year}
+                            label="Rok"
+                            onChange={(event) => {
+                                setYear(Number(event.target.value));
+                            }}
+                        >
+                            <MenuItem value={2023}>2023</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Autocomplete
                         value={selectedStreet}
                         onChange={(event, newValue) => {
