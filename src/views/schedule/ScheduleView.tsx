@@ -93,7 +93,7 @@ export const ScheduleView = () => {
     return (
         <>
             <Container>
-                <Stack sx={{ width: "100%", padding: "50px" }} gap={2} alignItems="center">
+                <Stack sx={{ width: "100%", padding: "50px 0" }} gap={2} alignItems="center">
                     {selectedStreetSchedule && (
                         <TableContainer component={Paper} sx={{ width: "100%", maxWidth: 500 }}>
                             <Table aria-label="simple table">

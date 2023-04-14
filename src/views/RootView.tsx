@@ -97,7 +97,7 @@ export const RootView = () => {
     return (
         <>
             <Container>
-                <Stack sx={{ width: "100%", padding: "50px" }} gap={2} alignItems="center">
+                <Stack sx={{ width: "100%", padding: "50px 0" }} gap={2} alignItems="center">
                     <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
                         <InputLabel id="demo-simple-select-label">Rok</InputLabel>
                         <Select
