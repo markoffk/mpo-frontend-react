@@ -2,6 +2,7 @@ import { datetime, RRule, RRuleSet, ByWeekday } from "rrule";
 import { EventAttributes } from "ics";
 import dayjs from "dayjs";
 import { StreetSchedule, WasteType } from "./types";
+import { wasteTypeMap } from "./config";
 
 const monthMap = {
     stycznia: 1,
@@ -37,15 +38,6 @@ const polishDayToEnglishDayMap = {
     niedziela: "Sunday",
 };
 const polishDays = Object.keys(polishDayToEnglishDayMap);
-
-const wasteTypeMap: { [key in WasteType]: string } = {
-    mixed: "zmieszane",
-    paper: "papier",
-    plastic: "tworzywa sztuczne",
-    glass: "szkło",
-    bio: "bio",
-    barrel: "beczka",
-};
 
 const splitDates = (dates: string) => {
     return (dates ?? "")

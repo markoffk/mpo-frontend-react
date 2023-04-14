@@ -1,26 +1,14 @@
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import { StreetSchedule, WasteType } from "../../types";
 import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
-import {
-    Badge,
-    Button,
-    Container,
-    Link,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-} from "@mui/material";
+import { Badge, Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
 import { DateCalendar, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { RRule } from "rrule";
+import "dayjs/locale/pl";
 import dayjs, { Dayjs } from "dayjs";
-import RecyclingIcon from "@mui/icons-material/Recycling";
+import { CalendarDayBadge } from "./CalendarDayBadge";
 
 const wasteTypeToAbbrMap: { [key in WasteType]: string } = {
     mixed: "z",
@@ -31,19 +19,32 @@ const wasteTypeToAbbrMap: { [key in WasteType]: string } = {
     barrel: "beczka",
 };
 
-function DayWithHighlight(props: PickersDayProps<Dayjs> & { highlightedDays?: { [key: string]: Dayjs[] } }) {
-    const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+function DayWithHighlight(
+    props: PickersDayProps<Dayjs> & {
+        highlightedDays?: { [key: string]: Dayjs[] };
+        events?: ReturnType<typeof generateCalendarEventsForPreview>;
+    }
+) {
+    const { highlightedDays = [], events = [], day, outsideCurrentMonth, ...other } = props;
 
-    // const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) > 0;
-    // console.log('props.day', props.day.date());
     const calDayYMD = `${props.day.year()}-${props.day.month()}-${props.day.date()}`;
-    console.log("calDayYMD", calDayYMD);
-    const isSelected = Object.values(highlightedDays)
-        .flatMap((v) => v)
-        .some((v) => `${v.year()}-${v.month()}-${v.date()}` === calDayYMD);
+
+    const selection = Object.fromEntries(
+        events.map((event) => [
+            event.type,
+            event.events
+                .flatMap((ve) => ve.dates.map((v) => dayjs(v)))
+                .some((v) => `${v.year()}-${v.month()}-${v.date()}` === calDayYMD),
+        ])
+    );
 
     return (
-        <Badge key={props.day.toString()} overlap="circular" badgeContent={isSelected ? <RecyclingIcon /> : undefined}>
+        <Badge
+            sx={{ "& .MuiBadge-badge": { top: "10%", right: "45%" } }}
+            key={props.day.toString()}
+            overlap="circular"
+            badgeContent={<CalendarDayBadge selection={selection as any} />}
+        >
             <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
         </Badge>
     );
@@ -53,6 +54,7 @@ export const ScheduleView = () => {
     const { year, streetIndex, scheduleId } = useParams();
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
     const [dates, setDates] = useState<{ [key: string]: Dayjs[] }>({});
+    const [events, setEvents] = useState<ReturnType<typeof generateCalendarEventsForPreview>>([]);
 
     useEffect(() => {
         if (year !== undefined && streetIndex !== undefined && scheduleId !== undefined) {
@@ -82,10 +84,11 @@ export const ScheduleView = () => {
 
     useEffect(() => {
         if (selectedStreetSchedule) {
-            const events = generateCalendarEventsForPreview(Number(streetIndex), selectedStreetSchedule);
+            const evs = generateCalendarEventsForPreview(Number(streetIndex), selectedStreetSchedule);
 
+            setEvents(evs);
             setDates(
-                Object.fromEntries(events.map((v) => [v.type, v.events.flatMap((ve) => ve.dates.map((v) => dayjs(v)))]))
+                Object.fromEntries(evs.map((v) => [v.type, v.events.flatMap((ve) => ve.dates.map((v) => dayjs(v)))]))
             );
         }
     }, [selectedStreetSchedule]);
@@ -110,7 +113,7 @@ export const ScheduleView = () => {
                             </Table>
                         </TableContainer>
                     )}
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pl">
                         <DateCalendar
                             showDaysOutsideCurrentMonth
                             slots={{
@@ -118,6 +121,7 @@ export const ScheduleView = () => {
                             }}
                             slotProps={{
                                 day: {
+                                    events,
                                     highlightedDays: dates,
                                 } as any,
                             }}
