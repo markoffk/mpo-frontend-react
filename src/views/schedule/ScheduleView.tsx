@@ -10,15 +10,6 @@ import "dayjs/locale/pl";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarDayBadge } from "./CalendarDayBadge";
 
-const wasteTypeToAbbrMap: { [key in WasteType]: string } = {
-    mixed: "z",
-    paper: "p",
-    plastic: "ts",
-    glass: "s",
-    bio: "b",
-    barrel: "beczka",
-};
-
 function DayWithHighlight(
     props: PickersDayProps<Dayjs> & {
         highlightedDays?: { [key: string]: Dayjs[] };
