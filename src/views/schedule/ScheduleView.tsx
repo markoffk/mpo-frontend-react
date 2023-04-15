@@ -79,7 +79,7 @@ export const ScheduleView = () => {
                             bio: value[9],
                             barrel: value[10],
                         },
-                        year,
+                        year: Number(year),
                     }))[scheduleId]
                 )
             );
