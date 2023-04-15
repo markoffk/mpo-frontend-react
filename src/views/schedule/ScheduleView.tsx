@@ -1,9 +1,22 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { api } from "../../api";
 import { StreetSchedule, WasteType } from "../../types";
 import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
-import { Badge, Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
+import {
+    Badge,
+    Button,
+    Container,
+    Link,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+} from "@mui/material";
 import { DateCalendar, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/pl";
@@ -46,6 +59,7 @@ export const ScheduleView = () => {
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
     const [dates, setDates] = useState<{ [key: string]: Dayjs[] }>({});
     const [events, setEvents] = useState<ReturnType<typeof generateCalendarEventsForPreview>>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (year !== undefined && streetIndex !== undefined && scheduleId !== undefined) {
@@ -87,17 +101,17 @@ export const ScheduleView = () => {
     return (
         <>
             <Container>
-                <Stack sx={{ width: "100%", padding: "50px 0" }} gap={2} alignItems="center">
+                <Stack sx={{ width: "100%" }} gap={2} alignItems="center">
                     {selectedStreetSchedule && (
-                        <TableContainer component={Paper} sx={{ width: "100%", maxWidth: 500 }}>
+                        <TableContainer elevation={0} component={Paper} sx={{ width: "100%", maxWidth: 500 }}>
                             <Table aria-label="simple table">
                                 <TableBody>
                                     <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Adres
+                                        <TableCell align="left">
+                                            {selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}, Kraków
                                         </TableCell>
                                         <TableCell align="right">
-                                            {selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}
+                                            <Button onClick={() => navigate("/")}>zmień</Button>
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>

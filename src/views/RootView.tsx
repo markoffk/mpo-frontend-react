@@ -4,45 +4,21 @@ import {
     Container,
     FormControl,
     InputLabel,
-    Link,
     MenuItem,
-    Paper,
     Select,
     Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
     TextField,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
-import { generateCalendarFile } from "../generateCalendarFile";
-import { generateCalendarEventsForICS } from "../generateCalendarEvents";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api";
+import { ScheduleSummary } from "../components/ScheduleSummary";
 
 type StreetRow = {
     label: string;
     fileIndex: number;
-};
-
-const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) => {
-    const url = await generateCalendarFile(generateCalendarEventsForICS(streetIndex, schedule));
-
-    // trying to assign the file URL to a window could cause cross-site
-    // issues so this is a workaround using HTML5
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `odbior-krakow-${schedule.year}-${streetIndex}-${schedule.id}.ics`;
-
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-
-    URL.revokeObjectURL(url);
 };
 
 export const RootView = () => {
@@ -51,6 +27,7 @@ export const RootView = () => {
     const [streetSchedules, setStreetSchedules] = useState<StreetSchedule[]>([]);
     const [selectedStreet, setSelectedStreet] = useState<StreetRow | null>(null);
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
+    const navigate = useNavigate();
 
     const streets = useMemo(
         () =>
@@ -97,7 +74,7 @@ export const RootView = () => {
     return (
         <>
             <Container>
-                <Stack sx={{ width: "100%", padding: "50px 0" }} gap={2} alignItems="center">
+                <Stack sx={{ width: "100%", padding: { xs: "20px 0", md: "50px 0" } }} gap={2} alignItems="center">
                     <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
                         <InputLabel id="demo-simple-select-label">Rok</InputLabel>
                         <Select
@@ -141,97 +118,19 @@ export const RootView = () => {
                         }}
                         renderInput={(params) => <TextField {...params} label="Numer domu" />}
                     />
+                    {selectedStreet && selectedStreetSchedule && (
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                navigate(`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`)
+                            }
+                        >
+                            Pokaż
+                        </Button>
+                    )}
 
                     {selectedStreet && selectedStreetSchedule && (
-                        <TableContainer component={Paper} sx={{ width: "100%", maxWidth: 500 }}>
-                            <Table aria-label="simple table">
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Typ
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.houseType}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Sektor
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.sector}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Operator
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.operator}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Zmieszane
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.waste.mixed}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Papier
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.waste.paper}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Tworzywa sztuczne
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.waste.plastic}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Szkło
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.waste.glass}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Bio
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.waste.bio}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Beczka
-                                        </TableCell>
-                                        <TableCell align="right">{selectedStreetSchedule.waste.barrel}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Kalendarz
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Link
-                                                color="inherit"
-                                                component={RouterLink}
-                                                to={`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`}
-                                                title="Strona główna"
-                                            >
-                                                Pokaż
-                                            </Link>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Kalendarz w pliku .ics
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Button
-                                                onClick={() =>
-                                                    downloadCalendar(selectedStreet.fileIndex, selectedStreetSchedule)
-                                                }
-                                            >
-                                                Pobierz
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <ScheduleSummary fileIndex={selectedStreet.fileIndex} schedule={selectedStreetSchedule} />
                     )}
                 </Stack>
             </Container>
