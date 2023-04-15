@@ -1,14 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { api } from "../../api";
-import { StreetSchedule, WasteType } from "../../types";
+import { StreetSchedule } from "../../types";
 import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
 import {
     Badge,
     Button,
     Container,
-    Link,
     Paper,
     Stack,
     Table,
@@ -22,6 +20,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/pl";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarDayBadge } from "./CalendarDayBadge";
+import { ScheduleSummary } from "../../components/ScheduleSummary";
 
 function DayWithHighlight(
     props: PickersDayProps<Dayjs> & {
@@ -132,6 +131,9 @@ export const ScheduleView = () => {
                             }}
                         />
                     </LocalizationProvider>
+                    {selectedStreetSchedule && (
+                        <ScheduleSummary fileIndex={Number(streetIndex)} schedule={selectedStreetSchedule} />
+                    )}
                 </Stack>
             </Container>
         </>

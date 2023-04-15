@@ -14,7 +14,6 @@ import { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
-import { ScheduleSummary } from "../components/ScheduleSummary";
 
 type StreetRow = {
     label: string;
@@ -120,6 +119,7 @@ export const RootView = () => {
                     />
                     {selectedStreet && selectedStreetSchedule && (
                         <Button
+                            sx={{ width: '100%', maxWidth: 500 }}
                             variant="contained"
                             onClick={() =>
                                 navigate(`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`)
@@ -127,10 +127,6 @@ export const RootView = () => {
                         >
                             Pokaż kalendarz
                         </Button>
-                    )}
-
-                    {selectedStreet && selectedStreetSchedule && (
-                        <ScheduleSummary fileIndex={selectedStreet.fileIndex} schedule={selectedStreetSchedule} />
                     )}
                 </Stack>
             </Container>
