@@ -125,7 +125,7 @@ export const RootView = () => {
                                 navigate(`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`)
                             }
                         >
-                            Pokaż
+                            Pokaż kalendarz
                         </Button>
                     )}
 
