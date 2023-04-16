@@ -117,17 +117,18 @@ export const RootView = () => {
                         }}
                         renderInput={(params) => <TextField {...params} label="Numer domu" />}
                     />
-                    {selectedStreet && selectedStreetSchedule && (
-                        <Button
-                            sx={{ width: '100%', maxWidth: 500 }}
-                            variant="contained"
-                            onClick={() =>
-                                navigate(`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`)
-                            }
-                        >
-                            Pokaż kalendarz
-                        </Button>
-                    )}
+                    <Button
+                        disabled={!selectedStreet || !selectedStreetSchedule}
+                        sx={{ width: "100%", maxWidth: 500 }}
+                        variant="contained"
+                        onClick={() =>
+                            selectedStreet &&
+                            selectedStreetSchedule &&
+                            navigate(`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`)
+                        }
+                    >
+                        Pokaż kalendarz
+                    </Button>
                 </Stack>
             </Container>
         </>
