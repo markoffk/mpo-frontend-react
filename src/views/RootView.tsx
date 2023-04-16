@@ -30,10 +30,12 @@ export const RootView = () => {
 
     const streets = useMemo(
         () =>
-            Object.entries(streetMap).map(([streetName, fileIndex]) => ({
-                label: streetName,
-                fileIndex,
-            })),
+            Object.entries(streetMap)
+                .map(([streetName, fileIndex]) => ({
+                    label: streetName,
+                    fileIndex,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)),
         [streetMap]
     );
 
