@@ -10,10 +10,11 @@ import {
     TextField,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
 import { useNavigate } from "react-router-dom";
 import { Api, api } from "../api";
+import { Helmet } from "react-helmet";
 
 type StreetRow = {
     label: string;
@@ -80,6 +81,9 @@ export const RootView = () => {
 
     return (
         <>
+            <Helmet>
+                <title>Kiedyodbior - strona główna</title>
+            </Helmet>
             <Container>
                 <Stack sx={{ width: "100%", padding: { xs: "20px 0", md: "50px 0" } }} gap={2} alignItems="center">
                     <Stack direction="row" gap={1} sx={{ width: "100%", maxWidth: 500 }}>
@@ -94,7 +98,9 @@ export const RootView = () => {
                                 }}
                             >
                                 {Object.entries(cityIndex).map((value) => (
-                                    <MenuItem key={value[1]} value={value[1]}>{value[0]}</MenuItem>
+                                    <MenuItem key={value[1]} value={value[1]}>
+                                        {value[0]}
+                                    </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -149,7 +155,9 @@ export const RootView = () => {
                         onClick={() =>
                             selectedStreet &&
                             selectedStreetSchedule &&
-                            navigate(`/schedule/${cityId}/${year}/${selectedStreet.streetId}/${selectedStreetSchedule.id}`)
+                            navigate(
+                                `/schedule/${cityId}/${year}/${selectedStreet.streetId}/${selectedStreetSchedule.id}`
+                            )
                         }
                     >
                         Pokaż kalendarz

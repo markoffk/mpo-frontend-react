@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { api } from "../../api";
 import { StreetSchedule } from "../../types";
 import { generateCalendarEventsForPreview } from "../../generateCalendarEvents";
@@ -99,6 +100,18 @@ export const ScheduleView = () => {
 
     return (
         <>
+            {selectedStreetSchedule && (
+                <Helmet>
+                    <title>
+                        Kiedyodbior - {selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}, Kraków, rok
+                        ${year}
+                    </title>
+                    <meta
+                        name="description"
+                        content={`Harmonogram odbioru odpadów ${selectedStreetSchedule.street} ${selectedStreetSchedule.houseNumber}, Kraków, rok ${year}`}
+                    />
+                </Helmet>
+            )}
             <Container>
                 <Stack sx={{ width: "100%" }} gap={2} alignItems="center">
                     {selectedStreetSchedule && (
@@ -107,7 +120,8 @@ export const ScheduleView = () => {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell align="left">
-                                            {selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber}, Kraków
+                                            {selectedStreetSchedule.street} {selectedStreetSchedule.houseNumber},
+                                            Kraków, rok {year}
                                         </TableCell>
                                         <TableCell align="right">
                                             <Button onClick={() => navigate("/")}>zmień</Button>
