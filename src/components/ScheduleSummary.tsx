@@ -18,14 +18,14 @@ import { generateCalendarFile } from "../generateCalendarFile";
 import { generateCalendarEventsForICS } from "../generateCalendarEvents";
 import DownloadIcon from "@mui/icons-material/Download";
 
-const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) => {
-    const url = await generateCalendarFile(generateCalendarEventsForICS(streetIndex, schedule));
+const downloadCalendar = async (streetId: number, schedule: StreetSchedule) => {
+    const url = await generateCalendarFile(generateCalendarEventsForICS(streetId, schedule));
 
     // trying to assign the file URL to a window could cause cross-site
     // issues so this is a workaround using HTML5
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `odbior-krakow-${schedule.year}-${streetIndex}-${schedule.id}.ics`;
+    anchor.download = `odbior-krakow-${schedule.year}-${streetId}-${schedule.id}.ics`;
 
     document.body.appendChild(anchor);
     anchor.click();
@@ -35,10 +35,10 @@ const downloadCalendar = async (streetIndex: number, schedule: StreetSchedule) =
 };
 
 type ScheduleSummaryProps = {
-    fileIndex: number;
+    streetId: number;
     schedule: StreetSchedule;
 };
-export const ScheduleSummary: React.FC<ScheduleSummaryProps> = ({ fileIndex, schedule }) => {
+export const ScheduleSummary: React.FC<ScheduleSummaryProps> = ({ streetId, schedule }) => {
     return (
         <Box sx={{ width: "100%", maxWidth: 500 }}>
             <Accordion elevation={0}>
@@ -116,7 +116,7 @@ export const ScheduleSummary: React.FC<ScheduleSummaryProps> = ({ fileIndex, sch
                     <Button
                         startIcon={<DownloadIcon />}
                         variant="contained"
-                        onClick={() => downloadCalendar(fileIndex, schedule)}
+                        onClick={() => downloadCalendar(streetId, schedule)}
                     >
                         Exportuj kalendarz
                     </Button>

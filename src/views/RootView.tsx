@@ -13,16 +13,18 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { StreetSchedule } from "../types";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api";
+import { Api, api } from "../api";
 
 type StreetRow = {
     label: string;
-    fileIndex: number;
+    streetId: number;
 };
 
 export const RootView = () => {
     const [year, setYear] = useState(dayjs().year());
-    const [streetMap, setStreetMap] = useState<{ [key: string]: number }>({});
+    const [cityId, setCityId] = useState(1 /* Kraków by default */);
+    const [cityIndex, setCityIndex] = useState<Api["city-index"]["body"]>({});
+    const [streetIndex, setStreetIndex] = useState<Api["street-index"]["body"]>({});
     const [streetSchedules, setStreetSchedules] = useState<StreetSchedule[]>([]);
     const [selectedStreet, setSelectedStreet] = useState<StreetRow | null>(null);
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
@@ -30,22 +32,26 @@ export const RootView = () => {
 
     const streets = useMemo(
         () =>
-            Object.entries(streetMap)
-                .map(([streetName, fileIndex]) => ({
+            Object.entries(streetIndex)
+                .map(([streetName, streetId]) => ({
                     label: streetName,
-                    fileIndex,
+                    streetId,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)),
-        [streetMap]
+        [streetIndex]
     );
 
     useEffect(() => {
-        api.fetchStreetIndex(year).then((data) => setStreetMap(data));
+        api.fetchCityIndex().then((data) => setCityIndex(data));
     }, []);
 
     useEffect(() => {
+        api.fetchStreetIndex(cityId, year).then((data) => setStreetIndex(data));
+    }, [cityId, year]);
+
+    useEffect(() => {
         if (selectedStreet) {
-            api.fetchStreet(year, selectedStreet.fileIndex).then((data) =>
+            api.fetchStreetSchedules(cityId, year, selectedStreet.streetId).then((data) =>
                 setStreetSchedules(
                     data.map((value: string[], index: number) => ({
                         id: index,
@@ -76,19 +82,36 @@ export const RootView = () => {
         <>
             <Container>
                 <Stack sx={{ width: "100%", padding: { xs: "20px 0", md: "50px 0" } }} gap={2} alignItems="center">
-                    <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
-                        <InputLabel id="demo-simple-select-label">Rok</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            value={year}
-                            label="Rok"
-                            onChange={(event) => {
-                                setYear(Number(event.target.value));
-                            }}
-                        >
-                            <MenuItem value={2023}>2023</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <Stack direction="row" gap={1} sx={{ width: "100%", maxWidth: 500 }}>
+                        <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
+                            <InputLabel id="schedule-city">Miasto</InputLabel>
+                            <Select
+                                labelId="schedule-city"
+                                value={cityId}
+                                label="Miasto"
+                                onChange={(event) => {
+                                    setCityId(Number(event.target.value));
+                                }}
+                            >
+                                {Object.entries(cityIndex).map((value) => (
+                                    <MenuItem key={value[1]} value={value[1]}>{value[0]}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
+                            <InputLabel id="schedule-year">Rok</InputLabel>
+                            <Select
+                                labelId="schedule-year"
+                                value={year}
+                                label="Rok"
+                                onChange={(event) => {
+                                    setYear(Number(event.target.value));
+                                }}
+                            >
+                                <MenuItem value={2023}>2023</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Stack>
                     <Autocomplete
                         value={selectedStreet}
                         onChange={(event, newValue) => {
@@ -126,7 +149,7 @@ export const RootView = () => {
                         onClick={() =>
                             selectedStreet &&
                             selectedStreetSchedule &&
-                            navigate(`/schedule/${year}/${selectedStreet.fileIndex}/${selectedStreetSchedule.id}`)
+                            navigate(`/schedule/${cityId}/${year}/${selectedStreet.streetId}/${selectedStreetSchedule.id}`)
                         }
                     >
                         Pokaż kalendarz

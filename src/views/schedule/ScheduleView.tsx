@@ -54,15 +54,15 @@ function DayWithHighlight(
 }
 
 export const ScheduleView = () => {
-    const { year, streetIndex, scheduleId } = useParams();
+    const { cityId, year, streetId, scheduleId } = useParams();
     const [selectedStreetSchedule, setSelectedStreetSchedule] = useState<StreetSchedule | null>(null);
     const [dates, setDates] = useState<{ [key: string]: Dayjs[] }>({});
     const [events, setEvents] = useState<ReturnType<typeof generateCalendarEventsForPreview>>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (year !== undefined && streetIndex !== undefined && scheduleId !== undefined) {
-            api.fetchStreet(Number(year), Number(streetIndex)).then((data) =>
+        if (year !== undefined && streetId !== undefined && scheduleId !== undefined) {
+            api.fetchStreetSchedules(Number(cityId), Number(year), Number(streetId)).then((data) =>
                 setSelectedStreetSchedule(
                     data.map((value: string[], index: number) => ({
                         id: index,
@@ -84,11 +84,11 @@ export const ScheduleView = () => {
                 )
             );
         }
-    }, [year, streetIndex, scheduleId]);
+    }, [year, streetId, scheduleId]);
 
     useEffect(() => {
         if (selectedStreetSchedule) {
-            const evs = generateCalendarEventsForPreview(Number(streetIndex), selectedStreetSchedule);
+            const evs = generateCalendarEventsForPreview(Number(streetId), selectedStreetSchedule);
 
             setEvents(evs);
             setDates(
@@ -132,7 +132,7 @@ export const ScheduleView = () => {
                         />
                     </LocalizationProvider>
                     {selectedStreetSchedule && (
-                        <ScheduleSummary fileIndex={Number(streetIndex)} schedule={selectedStreetSchedule} />
+                        <ScheduleSummary streetId={Number(streetId)} schedule={selectedStreetSchedule} />
                     )}
                 </Stack>
             </Container>

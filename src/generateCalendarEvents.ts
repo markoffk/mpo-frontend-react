@@ -74,7 +74,7 @@ const generateEvent = (
     month: number,
     day: number,
     wasteType: WasteType,
-    streetIndex: number,
+    streetId: number,
     street: string,
     houseNumber: string,
     scheduleId: string
@@ -108,7 +108,7 @@ const generateEventByRRule = (
 };
 
 export const generateCalendarEventsForOneWasteType = (
-    streetIndex: number,
+    streetId: number,
     schedule: StreetSchedule,
     wasteType: WasteType
 ): { dates: Date[]; event: EventAttributes }[] => {
@@ -129,7 +129,7 @@ export const generateCalendarEventsForOneWasteType = (
             //         Number(month),
             //         Number(day),
             //         wasteType,
-            //         streetIndex,
+            //         streetId,
             //         schedule.street,
             //         schedule.houseNumber,
             //         schedule.id
@@ -209,45 +209,45 @@ export const generateCalendarEventsForOneWasteType = (
 
     return events;
 };
-export const generateCalendarEventsForICS = (streetIndex: number, schedule: StreetSchedule): EventAttributes[] => {
+export const generateCalendarEventsForICS = (streetId: number, schedule: StreetSchedule): EventAttributes[] => {
     return [
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed").map((v) => v.event),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper").map((v) => v.event),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "plastic").map((v) => v.event),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass").map((v) => v.event),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio").map((v) => v.event),
-        ...generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetId, schedule, "mixed").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetId, schedule, "paper").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetId, schedule, "plastic").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetId, schedule, "glass").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetId, schedule, "bio").map((v) => v.event),
+        ...generateCalendarEventsForOneWasteType(streetId, schedule, "barrel").map((v) => v.event),
     ];
 };
 
 export const generateCalendarEventsForPreview = (
-    streetIndex: number,
+    streetId: number,
     schedule: StreetSchedule
 ): { type: WasteType; events: { dates: Date[]; event: EventAttributes }[] }[] => {
     return [
         {
             type: "mixed",
-            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "mixed"),
+            events: generateCalendarEventsForOneWasteType(streetId, schedule, "mixed"),
         },
         {
             type: "paper",
-            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "paper"),
+            events: generateCalendarEventsForOneWasteType(streetId, schedule, "paper"),
         },
         {
             type: "plastic",
-            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "plastic"),
+            events: generateCalendarEventsForOneWasteType(streetId, schedule, "plastic"),
         },
         {
             type: "glass",
-            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "glass"),
+            events: generateCalendarEventsForOneWasteType(streetId, schedule, "glass"),
         },
         {
             type: "bio",
-            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "bio"),
+            events: generateCalendarEventsForOneWasteType(streetId, schedule, "bio"),
         },
         {
             type: "barrel",
-            events: generateCalendarEventsForOneWasteType(streetIndex, schedule, "barrel"),
+            events: generateCalendarEventsForOneWasteType(streetId, schedule, "barrel"),
         },
     ];
 };

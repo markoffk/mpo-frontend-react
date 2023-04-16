@@ -1,5 +1,15 @@
+export type Api = {
+    "city-index": {
+        body: Record<string, number>;
+    };
+    "street-index": {
+        body: Record<string, number>;
+    };
+};
 export const api = {
-    fetchStreetIndex: (year: number) => fetch(`/api/${year}/street-index.json`).then((response) => response.json()),
-    fetchStreet: (year: number, fileIndex: number) =>
-        fetch(`/api/${year}/street-${fileIndex}.json`).then((response) => response.json()),
+    fetchCityIndex: () => fetch(`/api/city-index.json`).then((response) => response.json()),
+    fetchStreetIndex: (cityId: number, year: number) =>
+        fetch(`/api/${cityId}/${year}/street-index.json`).then((response) => response.json()),
+    fetchStreetSchedules: (cityId: number, year: number, streetId: number) =>
+        fetch(`/api/${cityId}/${year}/street-${streetId}.json`).then((response) => response.json()),
 };

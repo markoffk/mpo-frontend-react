@@ -18,7 +18,7 @@ export const App = () => {
                 </Toolbar>
             </AppBar>
             <Routes>
-                <Route path="/schedule/:year/:streetIndex/:scheduleId" element={<ScheduleView />} />
+                <Route path="/schedule/:cityId/:year/:streetId/:scheduleId" element={<ScheduleView />} />
                 <Route index element={<RootView />} />
             </Routes>
         </>
