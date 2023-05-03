@@ -5,6 +5,12 @@ import { BrowserRouter } from "react-router-dom";
 import "./global.css";
 import { App } from "./App";
 
+// if ('serviceWorker' in navigator) {
+//     navigator.serviceWorker.register(
+//         import.meta.env.MODE === 'production' ? '/service-worker.js' : '/dev-sw.js?dev-sw'
+//     )
+// }
+
 export const muiTheme = createTheme({
     palette: {
         primary: {
