@@ -13,7 +13,7 @@ export const App = () => {
                         <RecyclingIcon sx={{ mr: 2, animation: "rotation 10s infinite linear" }} />
                     </Link>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Odbiór odpadów MPO Kraków
+                        Kiedy odbiór odpadów?
                     </Typography>
                 </Toolbar>
             </AppBar>
