@@ -2,6 +2,7 @@ import {
     Autocomplete,
     Button,
     Container,
+    createFilterOptions,
     FormControl,
     InputLabel,
     MenuItem,
@@ -15,6 +16,22 @@ import { StreetSchedule } from "../types";
 import { useNavigate } from "react-router-dom";
 import { Api, api } from "../api";
 import { Helmet } from "react-helmet";
+
+const streetFilterOptions = createFilterOptions<StreetRow>({
+    matchFrom: "any",
+    stringify: (option) =>
+        option.label
+            .toLowerCase()
+            .replaceAll("ą", "a")
+            .replaceAll("ć", "c")
+            .replaceAll("ę", "e")
+            .replaceAll("ł", "l")
+            .replaceAll("ń", "n")
+            .replaceAll("ó", "o")
+            .replaceAll("ś", "s")
+            .replaceAll("ź", "z")
+            .replaceAll("ż", "z"),
+});
 
 type StreetRow = {
     label: string;
@@ -126,6 +143,7 @@ export const RootView = () => {
                         disablePortal
                         options={streets}
                         sx={{ width: "100%", maxWidth: 500 }}
+                        filterOptions={streetFilterOptions}
                         renderInput={(params) => <TextField {...params} label="Ulica" />}
                     />
                     <Autocomplete
