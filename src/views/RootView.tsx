@@ -121,7 +121,7 @@ export const RootView = () => {
                                 ))}
                             </Select>
                         </FormControl>
-                        <FormControl disabled fullWidth sx={{ maxWidth: 500 }}>
+                        <FormControl fullWidth sx={{ maxWidth: 500 }}>
                             <InputLabel id="schedule-year">Rok</InputLabel>
                             <Select
                                 labelId="schedule-year"
@@ -129,9 +129,11 @@ export const RootView = () => {
                                 label="Rok"
                                 onChange={(event) => {
                                     setYear(Number(event.target.value));
+                                    setSelectedStreet(null);
                                 }}
                             >
                                 <MenuItem value={2023}>2023</MenuItem>
+                                <MenuItem value={2024}>2024</MenuItem>
                             </Select>
                         </FormControl>
                     </Stack>
